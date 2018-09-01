@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    p {
+      margin: 0;
+      pad: 0;
+    }
+
+    .myLable {
+      /* border: 1px solid red; */
+      background-color: yellow;
+      transition: all .5s;
+    }
+
+    .popup {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: red;
+    }
+
+    .note {
+      flex: 1;
+      width: 100%;
+      background: red;
+    }
+
+    .noteArea {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .noteActive {
+      box-shadow: 0 0 5px #888888;
+      transition: all .5s;
+    }
+  </style>
+  <script>
+    // let flag = false
+    let userSelection
+    let selRange
+    let id = 0
+    function makeModal(e) {
+      console.log('makeModal')
+      const _body = document.getElementsByTagName('body')[0]
+      let old = document.getElementById('myPopup')
+      if (old) _body.removeChild(old)
+      // console.log('e.pageY', e.pageY)
+      // console.log('e.clientY', e.clientY)
+      // console.log('e.offsetY', e.offsetY)
+      const scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+      const scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+      // console.log('scrollY', scrollY)
+      const x = e.pageX || e.clientX + scrollX;
+      const y = e.pageY || e.clientY + scrollY;
+      const ele = makePopup(x, y)
+      _body.appendChild(ele)
+    }
+
+    function myFc() {
+      createNote()
+      handleRagneSelection()
+      id++
+      myFcCancle()
+    }
+
+    function myFcCancle() {
+      const _body = document.getElementsByTagName('body')[0]
+      let old = document.getElementById('myPopup')
+      old && _body.removeChild(old)
+    }
+
+    function makePopup(clientX, clientY) {
+      // console.log('clientX', clientX)
+      // console.log('clientY', clientY)
+      const myDiv = document.createElement('div')
+      myDiv.setAttribute('id', 'myPopup')
+      myDiv.setAttribute('class', 'popup')
+      myDiv.style.left = clientX + 'px'
+      myDiv.style.top = clientY + 'px'
+      const btn = document.createAttribute('Button')
+      myDiv.innerHTML = '<button onclick="myFc()">按钮</button><button onclick="myFcCancle()">取消</button>'
+      myDiv.addEventListener('click', (e) => {
+        e.stopPropagation()
+      })
+      return myDiv
+    }
+
+    function handleRagneSelection() {
+      const mySpan = document.createElement('span')
+      mySpan.setAttribute('class', 'myLable')
+      mySpan.setAttribute('data-select-item', `${id}`)
+      // 不可以覆盖选择
+      selRange.surroundContents(mySpan); // 报错的时候直接用下面的
+    }
+
+    window.onload = function () {
+      // window.addEventListener('click', function(e){
+      //   // myFcCancle()
+      //   console.log('window click')
+      // })
+      //   // const test = document.getElementById('test')
+      //   // test.addEventListener('click', (e) => {
+      //   //   console.log('e.pageY', e.pageY)
+      //   //   console.log('e.clientY', e.clientY)
+      //   //   console.log('e.offsetY', e.offsetY)
+      //   //   e.stopPropagation()
+      //   // })
+
+      //   const makePopup = (clientX, clientY) => {
+      //     console.log('clientX', clientX)
+      //     console.log('clientY', clientY)
+      //     const myDiv = document.createElement('div')
+      //     myDiv.setAttribute('id', 'myPopup')
+      //     myDiv.setAttribute('class', 'popup')
+      //     myDiv.style.left = clientX + 'px'
+      //     myDiv.style.top = clientY + 'px'
+      //     myDiv.addEventListener('click', (e) => {
+      //       console.log('2')
+      //       e.stopPropagation()
+      //     })
+      //     return myDiv
+      // }
+      const warp = document.getElementById('pp')
+      const oldHtml = localStorage.getItem('_html')
+      // if(oldHtml) warp.innerHTML = oldHtml
+      warp.onclick = function (e) {
+        // var range = document.createRange();
+        // var newNode = document.createElement("p");
+        // range.selectNode(document.getElementsByTagName("div").item(0));
+        e.stopPropagation()
+      myFcCancle()
+        userSelection = window.getSelection();
+        selRange = userSelection.getRangeAt(0);
+        const { isCollapsed } = userSelection
+        // console.log('isCollapsed', isCollapsed)
+        // var isSelectionEmpty = false;
+        // if (range.startContainer === range.endContainer) {
+        //   if (range.startOffset === range.endOffset) {
+        //     isSelectionEmpty = true;
+        //   }
+        // }
+        // userSelection.collapseToEnd()
+        if (!isCollapsed) {
+          // console.log('userSelection', userSelection)
+          // console.log('anchorNode', userSelection.anchorNode)
+          // console.log('anchorOffset', userSelection.anchorOffset)
+          // console.log('selRange', selRange)
+
+          // 获取备份的选中文字
+          // var span = document.createElement('SPAN');
+          // span.appendChild(selRange.cloneContents());
+          // warp.appendChild(span)
+          // console.log(selRange.toString())
+          makeModal(e)
+          // handleRagneSelection(selRange)
+          // 用span包含选择的区域
+          // const mySpan = document.createElement('span')
+          // mySpan.setAttribute('class', 'myLable')
+          // mySpan.setAttribute('data-item', `target_${id}`)
+          // // 不可以覆盖选择
+          // selRange.surroundContents(mySpan); // 报错的时候直接用下面的
+          // 可覆盖选择
+          // mySpan.appendChild(selRange.extractContents())
+          // selRange.insertNode(mySpan)
+
+
+          // 测试回退
+          const str = selRange.toString()
+          // console.log(selRange.commonAncestorContainer)
+          // console.log(selRange.endContainer)
+          // console.log(selRange.endOffset)
+          // 正则去替换?
+
+          // selRange.deleteContents()
+          // selRange.insertNode(str)
+          const result = document.getElementById('pp')
+          // console.log(result.outerHTML)
+          // createNote(id++) // 创建笔记
+          // saveHtml(result.outerHTML)
+          // var documentFragment = selRange.extractContents();
+          // document.body.appendChild(documentFragment);
+        }
+      }
+
+      // const person = new Person()
+      // person.sayHello()
+      // const warp1 = document.getElementById('noteArea')
+      // warp1.appendChild(person.sayHello())
+    }
+
+
+    function saveHtml(htmlString) {
+      localStorage.setItem('_html', htmlString)
+    }
+
+    function createNote() {
+      const noteArea = document.getElementById('noteArea')
+      noteArea.appendChild(makeTextArea(id))
+    }
+
+    function makeTextArea(id) {
+      const div = document.createElement('div')
+      div.setAttribute('class', 'noteArea')
+      const textArea = document.createElement('textarea')
+      textArea.setAttribute('data-select-item-note', `${id}`)
+      textArea.setAttribute('id', `note_${id}`)
+      // textArea.onclick = function (){
+      //   console.log(this.dataset)
+      // }
+      textArea.addEventListener('click', function () {
+        // console.log(this)
+      })
+      textArea.addEventListener('blur', function (e) {
+        // const d = document.getElementById(`note_${id}`)
+        // console.log(d.value)
+      })
+      textArea.addEventListener('mouseover', function(e){
+        const noteID = e.target.dataset.selectItemNote
+        // 可以循环找，也可以用正则
+        // console.log(`span[data-select-item="${noteID}"]`)
+        const selectSpan = document.querySelector(`span[data-select-item="${noteID}"]`)
+        selectSpan.setAttribute('class', 'myLable noteActive')
+        // const ele = e.target
+        // ele.setAttribute('class', 'noteActive')
+      })
+      textArea.addEventListener('mouseout', function(e){
+        const noteID = e.target.dataset.selectItemNote
+        // 可以循环找，也可以用正则
+        // console.log(`span[data-select-item="${noteID}"]`)
+        const selectSpan = document.querySelector(`span[data-select-item="${noteID}"]`)
+        selectSpan.setAttribute('class', 'myLable')
+        // const ele = e.target
+        // ele.setAttribute('class', 'noteActive')
+      })
+      div.appendChild(textArea)
+      div.insertAdjacentHTML('beforeend', '<div><button onclick="myFc()">添加</button><button onclick="myFcCancle()">取消</button></div>')
+      return div
+    }
+    function Person() {
+      this.sayHello = function () {
+        const a = document.createElement('div')
+        a.innerText = 'huhaoran'
+        a.addEventListener('click', () => {
+          console.log(this)
+        })
+        return a
+      }
+    }
+
+  </script>
+</head>
+
+<body style="position: relative;">
+  <div style="display: flex; line-height: 2">
+    <div style="flex: 2">
+      <p id="pp">
+        当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
+        当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
+        当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生 ，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
+        当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
+        当前住房租赁市场制度及市场体系还不完善，导致的的租赁市场乱象丛生，非规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
+      </p>
+    </div>
+    <div class="note" id="noteArea">
+      asdfsfas
+    </div>
+  </div>
+
+</body>
+
+</html>
