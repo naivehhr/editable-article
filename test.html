@@ -92,8 +92,16 @@
 
       // 还原span至文本
       const selectSpan = document.querySelector(`span[data-select-item="${ele.dataset.noteArea}"]`)
-      const text = selectSpan.innerHTML
-      const newHtml = artical.innerHTML.replace(/<span class=\"myLable\"(.)+>(.*?)<\/span>/, text)
+      const text = selectSpan.innerHTML 
+      const newHtml = artical.innerHTML.replace(/<span class=\"myLable\"[^>]*>(<span[^>]*>.*?<\/span>|.)*?<\/span>/, (match, p1, offset, string)=> {
+        console.log('match', match)
+        console.log('p1', p1)
+        console.log('offset', offset)
+        console.log('string', string)
+        return text
+      })
+      console.log('text', text)
+      console.log('newHtml', newHtml)
       artical.innerHTML = newHtml
       saveNote()
     }
@@ -142,7 +150,7 @@
         myFcCancle()
         userSelection = window.getSelection();
         selRange = userSelection.getRangeAt(0);
-        // console.log('赋值', selRange)
+        console.log('赋值', userSelection)
         const { isCollapsed } = userSelection
         // console.log('isCollapsed', isCollapsed)
         // var isSelectionEmpty = false;
@@ -258,14 +266,9 @@
     <div style="flex: 2" id="artical">
       <p id="paragraph">
         当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
-        当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
-        当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生 ，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
-        当前住房租赁市场制度及市场体系还不完善，导致正规的租赁市场乱象丛生，非正规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。
       </p>
-
-      <div><img src="./logo.jpg" alt="" sizes="" srcset="" style="width: 100px; height: 100px"></div>
-      <div>123123当前住房租赁市场制度及市场体系还不完善，导致的的租赁市场乱象丛生，非规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。</div>
-      <div>6666当前住房租赁市场制度及市场体系还不完善，导致的的租赁市场乱象丛生，非规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。</div>
+      <img src="./logo.jpg" alt="" sizes="" srcset="" style="width: 100px; height: 100px">
+      租户利益保障制度缺乏huha<span>22222</span>oran对于租期、租价和租赁期间租户的<span>111111111</span>诸多权益，没有明确硬约束力的法律规定。
     </div>
     <div class="note" id="noteArea">
     </div>
