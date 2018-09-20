@@ -45,6 +45,7 @@
     let selRange
     let id = localStorage.getItem('id') + 1 || 0
     let _top = '0px'
+    const customEle = 'zhihu-mark'
     function makeModal(e) {
       const _body = document.getElementsByTagName('body')[0]
       let old = document.getElementById('myPopup')
@@ -92,11 +93,27 @@
       noteArea.removeChild(ele)
 
       // 还原span至文本
-      const selectSpan = document.querySelector(`cus[data-select-item="${ele.dataset.noteArea}"]`)
+      const selectSpan = document.querySelector(`${customEle}[data-select-item="${ele.dataset.noteArea}"]`)
       const text = selectSpan.innerHTML
-      const newHtml = artical.innerHTML.replace(/<cus class=\"myLable\"(.)+>(.*?)<\/cus>/, text)
+      console.log('ele.dataset.noteArea', ele.dataset.noteArea, text)
+      const rg = RegExp(`<zhihu-mark class=\"myLable\" data-select-item="${ele.dataset.noteArea}"+>(.*?)<\/zhihu-mark>`);
+      const newHtml = artical.innerHTML.replace(rg, (d1) => {
+        console.log('d1===', d1)
+        return text
+      })
+      // 这里需要加一步，合并剩余的标签
+      console.log('newHtml==', newHtml)
       artical.innerHTML = newHtml
       saveNote()
+    }
+
+
+    function mergerHtml(_html) {
+
+    }
+
+    function createRandomId() {
+      return (Math.random() * 10000000).toString(16).substr(0, 4) + '-' + (new Date()).getTime() + '-' + Math.random().toString().substr(2, 5);
     }
 
     function makePopup(clientX, clientY) {
@@ -115,7 +132,7 @@
     }
 
     function handleRagneSelection() {
-      const mySpan = document.createElement('cus')
+      const mySpan = document.createElement(customEle)
       mySpan.setAttribute('class', 'myLable')
       mySpan.setAttribute('data-select-item', `${id}`)
       // 不可以覆盖选择
@@ -132,14 +149,15 @@
       console.log('选中内容==', selRange)
       console.log('startContainer=', selRange.startContainer)
       console.log('startOffset=', selRange.startOffset)
-      console.log('startContainer obj=', selRange.startContainer.parentNode)
+      console.log('startContainer obj=', selRange.startContainer.parentNode.id)
       console.log('startText=', selRange.startContainer.parentNode.innerHTML[selRange.startOffset])
       console.log('endContainer=', selRange.endContainer)
       console.log('endOffset=', selRange.endOffset)
-      console.log('endContainer obj=', selRange.endContainer.parentNode.innerHTML)
+      console.log('endContainer obj=', selRange.endContainer.parentNode)
       console.log('endContainer obj edn text=', selRange.endContainer.parentNode.innerHTML[selRange.endOffset])
       console.log('00000000', domToString(selRange.endContainer.parentNode))
       // console.log('====', selRange.endContainer.hasChildNodes())
+      // 这里要加一层控制，添加自定义随机id，以便后面合并用
       mySpan.appendChild(selRange.extractContents())
       selRange.insertNode(mySpan)
       return true
@@ -158,7 +176,7 @@
         myFcCancle()
         userSelection = window.getSelection();
         selRange = userSelection.getRangeAt(0);
-        console.log('赋值', userSelection)
+        // console.log('赋值', userSelection)
         const { isCollapsed } = userSelection
         // console.log('isCollapsed', isCollapsed)
         // var isSelectionEmpty = false;
@@ -220,7 +238,8 @@
       // 可以循环找，也可以用正则
       // console.log(`span[data-select-item="${noteID}"]`)
       const selectSpan = document.querySelector(`span[data-select-item="${noteID}"]`)
-      selectSpan.setAttribute('class', 'myLable noteActive')
+      if (selectSpan)
+        selectSpan.setAttribute('class', 'myLable noteActive')
       // const ele = e.target
       // ele.setAttribute('class', 'noteActive')
     }
@@ -236,7 +255,8 @@
       // 可以循环找，也可以用正则
       // console.log(`span[data-select-item="${noteID}"]`)
       const selectSpan = document.querySelector(`span[data-select-item="${noteID}"]`)
-      selectSpan.setAttribute('class', 'myLable')
+      if (selectSpan)
+        selectSpan.setAttribute('class', 'myLable')
     }
 
     function makeTextArea(id) {
@@ -281,12 +301,11 @@
   <div style="display: flex; line-height: 2">
     <div style="flex: 2" id="artical">
       <p id="paragraph">
-        当前住房租赁市场制度及市场<span>span区域</span>户的诸多权益，<strong>strong区域</strong>没有明确硬约束力<div>div区域</div>的法律规定。
+        当前住房租赁市场制度及市场<span id='myssss'>span区域</span>户的诸多权益，<strong>strong区域</strong>没有明确硬约束力<div>div区域</div>的法律规定。
+        <div style="display: inline;">div
+          <section style="display: inline;">段落</section>
+        </div>
       </p>
-
-      <!-- <div><img src="./logo.jpg" alt="" sizes="" srcset="" style="width: 100px; height: 100px"></div>
-      <div>123123当前住房租赁市场制度及市场体系还不完善，导致的的租赁市场乱象丛生，非规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。</div>
-      <div>6666当前住房租赁市场制度及市场体系还不完善，导致的的租赁市场乱象丛生，非规的租赁“黑市”盛行，严重影响租赁双方的权益。一方面，中低收入家庭、年轻家庭、外来人口住房难；另一方面，住房存在结构性空置问题。其原因之一是，租户利益保障制度缺乏，对于租期、租价和租赁期间租户的诸多权益，没有明确硬约束力的法律规定。</div> -->
     </div>
     <div class="note" id="noteArea">
     </div>
