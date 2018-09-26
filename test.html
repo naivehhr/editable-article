@@ -133,8 +133,10 @@
 
     function handleRagneSelection() {
       const mySpan = document.createElement(customEle)
+      const tId = createRandomId()
       mySpan.setAttribute('class', 'myLable')
-      mySpan.setAttribute('data-select-item', `${id}`)
+      mySpan.setAttribute('data-select-item', `${id}`) // 这个作用和下面其实是一样的，但这个不灵活
+      mySpan.setAttribute('data-select-id', tId)
       // 不可以覆盖选择
       // selRange.surroundContents(mySpan); // 报错的时候直接用下面的
       // try {
