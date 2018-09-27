@@ -43,7 +43,8 @@
     // let flag = false
     let userSelection
     let selRange
-    let id = localStorage.getItem('id') + 1 || 0
+    // let id = localStorage.getItem('id') + 1 || 0
+    let uuid
     let _top = '0px'
     const customEle = 'zhihu-mark'
     function makeModal(e) {
@@ -66,7 +67,6 @@
       myFcCancle()
       if (!handleRagneSelection()) return
       createNote()
-      id++
     }
 
     function myFcCancle() {
@@ -82,7 +82,7 @@
       // const arr = noteSource.querySelectorAll('textarea[data-select-item-note]')
       localStorage.setItem('textSourceHtml', textSource)
       localStorage.setItem('noteSourceHtml', noteSource)
-      localStorage.setItem('id', id)
+      localStorage.setItem('uuid', uuid)
     }
 
     function cancleNote(e) {
@@ -96,19 +96,21 @@
       const selectSpan = document.querySelector(`${customEle}[data-select-item="${ele.dataset.noteArea}"]`)
       const text = selectSpan.innerHTML
       console.log('ele.dataset.noteArea', ele.dataset.noteArea, text)
-      const rg = RegExp(`<zhihu-mark class=\"myLable\" data-select-item="${ele.dataset.noteArea}"+>(.*?)<\/zhihu-mark>`);
+      const rg = RegExp(`<zhihu-mark class=\"myLable\" data-select-item="${ele.dataset.noteArea}"[^>/]*>(.*?)<\/zhihu-mark>`);
+      console.log('artical.innerHTML', artical.innerHTML)
       const newHtml = artical.innerHTML.replace(rg, (d1) => {
         console.log('d1===', d1)
         return text
       })
       // 这里需要加一步，合并剩余的标签
-      console.log('newHtml==', newHtml)
+      const _html = mergerHtml(newHtml)
       artical.innerHTML = newHtml
       saveNote()
     }
 
 
     function mergerHtml(_html) {
+      console.log('_html==', _html)
 
     }
 
@@ -133,10 +135,10 @@
 
     function handleRagneSelection() {
       const mySpan = document.createElement(customEle)
-      const tId = createRandomId()
+      uuid = createRandomId()
       mySpan.setAttribute('class', 'myLable')
-      mySpan.setAttribute('data-select-item', `${id}`) // 这个作用和下面其实是一样的，但这个不灵活
-      mySpan.setAttribute('data-select-id', tId)
+      mySpan.setAttribute('data-select-item', `${uuid}`) // 这个作用和下面其实是一样的，但这个不灵活
+      mySpan.setAttribute('data-select-id', uuid)
       // 不可以覆盖选择
       // selRange.surroundContents(mySpan); // 报错的时候直接用下面的
       // try {
@@ -232,7 +234,7 @@
 
     function createNote() {
       const noteArea = document.getElementById('noteArea')
-      noteArea.appendChild(makeTextArea(id))
+      noteArea.appendChild(makeTextArea(uuid))
     }
 
     function handelNoteHover(e) {
