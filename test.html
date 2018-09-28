@@ -95,22 +95,48 @@
       // 还原span至文本
       const selectSpan = document.querySelector(`${customEle}[data-select-item="${ele.dataset.noteArea}"]`)
       const text = selectSpan.innerHTML
-      console.log('ele.dataset.noteArea', ele.dataset.noteArea, text)
+      const nextEle = selectSpan.nextElementSibling
+      const preEle = selectSpan.previousElementSibling
+      const nodeList = Array.from(selectSpan.childNodes)
+
       const rg = RegExp(`<zhihu-mark class=\"myLable\" data-select-item="${ele.dataset.noteArea}"[^>/]*>(.*?)<\/zhihu-mark>`);
-      console.log('artical.innerHTML', artical.innerHTML)
+      // console.log('artical.innerHTML', artical.innerHTML)
+      // console.log('ele.dataset.noteArea', ele.dataset.noteArea)
       const newHtml = artical.innerHTML.replace(rg, (d1) => {
         console.log('d1===', d1)
         return text
       })
       // 这里需要加一步，合并剩余的标签
-      const _html = mergerHtml(newHtml)
       artical.innerHTML = newHtml
+
+
+      console.log('选中区域 innerHtml', text)
+      console.log('需要替换的HTMLnext', nextEle)
+      console.log('需要替换的HTMLprevious', preEle)
+      // 这里需要判断是合并前面的还是合并后面的
+      // 举例合并后面的
+      const mergerPoint = nodeList[nodeList.length - 1]
+      mergerPoint.insertAdjacentHTML('beforeend', nextEle.innerHTML) 
+      console.log('被合并ele', mergerPoint)
+      nodeList.pop()
+      nodeList.push(mergerPoint)
+      console.log('原数组', nodeList)
+      const newText = nodeList.reduce((pre, cur) => {
+        return `${pre}${cur.outerHTML || cur.nodeValue}` // 这里要判断节点类型的
+      }, '')
+      const rgHtmlStr = text + nextEle.outerHTML // 这里后面如果不是个Node应该怎么处理
+      const newHtml1 = artical.innerHTML.replace(rgHtmlStr, (d1) => {
+        // console.log('d1===', d1)
+        return newText
+      })
+      artical.innerHTML = newHtml1
+      const _html = mergerHtml(newHtml)
       saveNote()
     }
 
 
     function mergerHtml(_html) {
-      console.log('_html==', _html)
+      // console.log('_html==', _html)
 
     }
 
@@ -149,17 +175,17 @@
       //   alert('不能覆盖添加')
       //   return false
       // }
-      console.log('userSelection', userSelection)
-      console.log('选中内容==', selRange)
-      console.log('startContainer=', selRange.startContainer)
-      console.log('startOffset=', selRange.startOffset)
-      console.log('startContainer obj=', selRange.startContainer.parentNode.id)
-      console.log('startText=', selRange.startContainer.parentNode.innerHTML[selRange.startOffset])
-      console.log('endContainer=', selRange.endContainer)
-      console.log('endOffset=', selRange.endOffset)
-      console.log('endContainer obj=', selRange.endContainer.parentNode)
-      console.log('endContainer obj edn text=', selRange.endContainer.parentNode.innerHTML[selRange.endOffset])
-      console.log('00000000', domToString(selRange.endContainer.parentNode))
+      // console.log('userSelection', userSelection)
+      // console.log('选中内容==', selRange)
+      // console.log('startContainer=', selRange.startContainer)
+      // console.log('startOffset=', selRange.startOffset)
+      // console.log('startContainer obj=', selRange.startContainer.parentNode.id)
+      // console.log('startText=', selRange.startContainer.parentNode.innerHTML[selRange.startOffset])
+      // console.log('endContainer=', selRange.endContainer)
+      // console.log('endOffset=', selRange.endOffset)
+      // console.log('endContainer obj=', selRange.endContainer.parentNode)
+      // console.log('endContainer obj edn text=', selRange.endContainer.parentNode.innerHTML[selRange.endOffset])
+      // console.log('00000000', domToString(selRange.endContainer.parentNode))
       // console.log('====', selRange.endContainer.hasChildNodes())
       // 这里要加一层控制，添加自定义随机id，以便后面合并用
       mySpan.appendChild(selRange.extractContents())
@@ -168,6 +194,7 @@
     }
 
     window.onload = function () {
+      // console.log('选中区域的下一个', document.getElementById('myssss').nextElementSibling)
       const artical = document.getElementById('artical')
       const noteArea = document.getElementById('noteArea')
       // const oldHtml = localStorage.getItem('textSourceHtml')
@@ -305,7 +332,7 @@
   <div style="display: flex; line-height: 2">
     <div style="flex: 2" id="artical">
       <p id="paragraph">
-        当前住房租赁市场制度及市场<span id='myssss'>span区域</span>户的诸多权益，<strong>strong区域</strong>没有明确硬约束力<div>div区域</div>的法律规定。
+        当前住房租<span>赁市</span>场制度及市场<span>dddd</span><span id='myssss'>span区域</span>户的诸多权益，<strong>strong区域</strong>没有明确硬约束力<div>div区域</div>的法律规定。
         <div style="display: inline;">div
           <section style="display: inline;">段落</section>
         </div>
