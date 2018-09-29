@@ -110,12 +110,15 @@
       artical.innerHTML = newHtml
 
 
+      console.log('选中区域 selectSpan', selectSpan)
       console.log('选中区域 innerHtml', text)
       console.log('需要替换的HTMLnext', nextEle)
       console.log('需要替换的HTMLprevious', preEle)
-      // 这里需要判断是合并前面的还是合并后面的
+      // 这里需要判断是合并前面的还是合并后面的，判断的依据呢？上下都合并一次，分别做类型判断
+
       // 举例合并后面的
-      const mergerPoint = nodeList[nodeList.length - 1]
+      const mergerPoint = selectSpan.lastChild //nodeList[nodeList.length - 1]
+      // mergerPoint也要判断类型,和相邻的判断类型，如果不一样就不用合并了...不行，还是很乱，得重新捋一遍
       mergerPoint.insertAdjacentHTML('beforeend', nextEle.innerHTML) 
       console.log('被合并ele', mergerPoint)
       nodeList.pop()
